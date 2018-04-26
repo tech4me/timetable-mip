@@ -38,7 +38,7 @@ try:
             if count != 0:
                 m.addConstr(l, GRB.LESS_EQUAL, 1)
 
-    # Constraint: Course Taken (for course that are must take)
+    # Constraint: Course Taken (for courses that are must take)
     s = c.get_meeting_sections_sets()
     for i in range(len(s)):
         l = LinExpr()
