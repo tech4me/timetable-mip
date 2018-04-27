@@ -2,17 +2,19 @@ import json
 from pprint import pprint
 
 class Course:
-    meeting_sections_count = 0
-    meeting_sections_slots = []
-    # Exclusive sets, each subset will contain many sections but only one should be picked
-    meeting_sections_sets = [] # 0:LEC 1:TUT 2:PRA 3:UNKNOWN
 
-    def __init__(self):
-        t = []
-        for i in range(4):
-            self.meeting_sections_sets.append(t[:])
+    def __init__(self, course_name):
+        # Time slots for each meeting section
+        self.meeting_sections_slots = []
+        # Section code for each meeting section
+        self.meeting_sections_codes = []
+        # Exclusive sets, each subset will contain many sections but only one should be picked
+        self.meeting_sections_sets = [[] for _ in range(4)] # 0:LEC 1:TUT 2:PRA 3:UNKNOWN
 
-        course = json.load(open('course_data/ECE344H1S20181.json'))
+        course = json.load(open('course_data/' + course_name + '.json'))
+        # Course code
+        self.course_code = course['code']
+        # Total number of sections
         self.meeting_sections_count = len(course['meeting_sections'])
         for i in range(self.meeting_sections_count):
             section_set_index = self.convert_section_type_to_num(course['meeting_sections'][i]['code'][:1]) # Get first character of the section code
@@ -23,12 +25,7 @@ class Course:
                 temp = course['meeting_sections'][i]['times'][j]
                 time_slots.append((self.convert_day_to_num(temp['day']), self.convert_time_range_to_slot_nums(temp['start'], temp['end'])))
             self.meeting_sections_slots.append(time_slots)
-
-    def get_meeting_sections_slots(self):
-        return self.meeting_sections_slots
-
-    def get_meeting_sections_sets(self):
-        return self.meeting_sections_sets
+            self.meeting_sections_codes.append(course['meeting_sections'][i]['code'])
 
     def convert_day_to_num(self, day):
         switcher = {
